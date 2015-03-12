@@ -16,7 +16,10 @@
 code="$1"
 i=1;
 
+# Compila
+$(gcc $code.c -o $code)
 
+# Para cada arquivo em aux com final .in
 for filename in $(pwd)/aux/*.in; do
 
 	# Retira a extensao do nome do arquivo
