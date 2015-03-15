@@ -14,7 +14,29 @@
 
 
 code="$1"
-i=1;
+
+#novo modo de uso: ./test.sh nome_do_programa turma id_do_lab numero_de_testes
+turma="$2"
+lab="$3"
+numeroTestes="$4"
+
+i=0;
+
+if ( [ -d aux ] ); then
+	echo "usando testes antigos da pasta aux"
+else
+	echo "baixando testes"
+	$(mkdir aux)
+	while [ $i -lt $numeroTestes ]; do
+		#baixa testes, usando -k por causa dos certificados quebrados do IC
+		$(curl -k https://susy.ic.unicamp.br:9999/$turma/$lab/dados/arq$i.in > aux/arq$i.in)
+		$(curl -k https://susy.ic.unicamp.br:9999/$turma/$lab/dados/arq$i.res > aux/arq$i.res)
+		let i=i+1
+	done
+fi
+
+
+i=0;
 
 # Compila
 $(gcc $code.c -o $code)
