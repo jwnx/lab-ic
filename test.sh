@@ -1,54 +1,55 @@
 #!/bin/bash
 
+#	Instalação:
+#	chmod +x test.sh
 #
-# Os arquivos de teste devem ser descompactados
-# na pasta chamada "aux" que esta dentro da pasta
-# que contem o codigo compilado.
+#	Configuração:
+#	Alterar o nome da turma
 #
-# Ex: /home/cc2015/ra666666/codigos/00-baby-steps/aux
-#     /home/cc2015/ra666666/codigos/00-baby-steps/lab00
-#
-# Ou voce pode simplesmente mudar o nome da pasta 
-# no codigo...
-#
+#	Modo de uso:
+#	./test.sh nome_do_programa
 
 
 code="$1"
+turma="mc102wy"
 
-#novo modo de uso: ./test.sh nome_do_programa turma id_do_lab numero_de_testes
-turma="$2"
-lab="$3"
-numeroTestes="$4"
+i=1;
 
-i=0;
+# Se o diretorio nao existe, baixe os arquivos e crie o diretorio
 
 if ( [ -d aux ] ); then
-	echo "usando testes antigos da pasta aux"
+	echo -e "\033[33m W \033[0m Usando diretorio \033[33maux\033[0m local"
 else
-	echo "baixando testes"
+	echo -e "\033[33m W \033[0m Baixando testes..."
+	read -p $'\033[33m Q \033[0m Numero do lab (ex. 00): ' nlab
+
+	# Cria o diretorio e baixa o zip
 	$(mkdir aux)
-	while [ $i -lt $numeroTestes ]; do
-		#baixa testes, usando -k por causa dos certificados quebrados do IC
-		$(curl -k https://susy.ic.unicamp.br:9999/$turma/$lab/dados/arq$i.in > aux/arq$i.in)
-		$(curl -k https://susy.ic.unicamp.br:9999/$turma/$lab/dados/arq$i.res > aux/arq$i.res)
-		let i=i+1
-	done
+	$(curl -silent -LOk https://susy.ic.unicamp.br:9999/$turma/$nlab/aux/testes.zip)
+
+	echo -e "\033[33m W \033[0m Descompactando arquivos..."
+
+	# Descompacta os arquivos e deleta o zip
+	$(unzip -q testes.zip -d aux > /dev/null 2>&1)
+	$(rm testes.zip)
+
 fi
 
-
-i=0;
 
 # Compila
 $(gcc $code.c -o $code)
 
 # Para cada arquivo em aux com final .in
+
+echo -e "\033[31m I \033[0m Rodando testes"
+
 for filename in $(pwd)/aux/*.in; do
 
 	# Retira a extensao do nome do arquivo
 	file="${filename%.*}"
 
 	# Itera pelos testes
-	printf "\033[33m[ RUN ] \033[0m Teste %02d... " $i
+	printf "\033[33m R \033[0m Teste \033[33m%02d\033[0m... " $i
 
 	# Cria a saida de acordo com a entrada
 	$(./$code < $file.in > $file.out)
