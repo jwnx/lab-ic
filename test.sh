@@ -37,7 +37,7 @@ fi
 
 
 # Compila
-$(gcc $code.c -o $code)
+$(gcc $code.c -o $code -lm)
 
 # Para cada arquivo em aux com final .in
 
@@ -49,7 +49,7 @@ for filename in $(pwd)/aux/*.in; do
 	file="${filename%.*}"
 
 	# Itera pelos testes
-	printf "\033[33m R \033[0m Teste \033[33m%02d\033[0m... " $i
+	printf "\033[33m R \033[0m Teste \033[1m%02d\033[0m... " $i
 
 	# Cria a saida de acordo com a entrada
 	$(./$code < $file.in > $file.out)
