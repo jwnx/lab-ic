@@ -36,8 +36,11 @@ else
 fi
 
 
+# Remove os acentos do arquivo
+$(sed 'y/áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ/aAaAaAaAeEeEiIoOoOoOuUcC/' <$code.c> $code.tmp; mv $code.tmp $code.c)
+
 # Compila
-$(gcc $code.c -o $code -lm)
+$(gcc -ansi  -Wall -Werror $code.c -o $code -lm)
 
 # Para cada arquivo em aux com final .in
 
@@ -63,7 +66,7 @@ for filename in $(pwd)/aux/*.in; do
 	then
 		echo -e "\033[31m FAIL\n \033[0m $(cat /tmp/thediff)"
 	else
-		echo -e "\033[32m OK"
+		echo -e "\033[32m OK\033[0m"
 	fi
 
 	# Remove o arquivo de saida
