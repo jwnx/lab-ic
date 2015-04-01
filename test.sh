@@ -13,7 +13,7 @@ code="$1"
 turma="mc102wy"
 i=1;
 
-# O codigo \033 eh usado para dar um espaco 
+# O codigo \033 eh usado para dar um espaco
 # Colors
 green="\033[32m"
 red="\033[31m"
@@ -31,19 +31,25 @@ else
     # Retira a extensao do nome do arquivo caso o usuario tenha colocado
     # o codigo C ao inves do nome do programa
     code="${code%.*}"
-    
+
+
+    # Remove os acentos do arquivo
+    acentos='y/áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ/aAaAaAaAeEeEiIoOoOoOuUcC/'
+    $(sed $acentos <$code.c> $code.tmp; mv $code.tmp $code.c)
+
     #Compila
-    echo -e "$yellow Compilando codigo $normal"  
-    $(gcc $code.c -o $code -lm)
+    echo -e "$yellow Compilando codigo $normal"
+    $(gcc -ansi $code.c -o $code -lm)
 
     #Caso a compilacao tenha dado erro
     if [ ! $? -eq 0 ]; then
 	#Sair do programa
 	echo -e "$red ERROR  $normal"
 	exit 1
+
     else
 	#Caso contrario continuar com a execucao dos testes
-	
+
 	# Se o diretorio nao existe, baixe os arquivos e crie o diretorio
 	if ( [ -d aux ] ); then
 	    echo -e "$yellow W $normal Usando diretorio $yellow[aux]$normal local"
@@ -83,7 +89,7 @@ else
 
 	    $(diff $file.out $file.res > /tmp/thediff 2>&1)
 
-	    if [ $? != 0 ] 
+	    if [ $? != 0 ]
 	    then
 		echo -e "$red FAIL\n $normal $(cat /tmp/thediff)"
 	    else
