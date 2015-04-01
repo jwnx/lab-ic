@@ -87,11 +87,11 @@ else
 	    # Compara com o resultado esperado e
 	    # diz se o programa passou ou nao
 
-	    $(diff $file.out $file.res > /tmp/thediff 2>&1)
+	    $(diff $file.out $file.res > ./.thediff 2>&1)
 
 	    if [ $? != 0 ]
 	    then
-		echo -e "$red FAIL\n $normal $(cat /tmp/thediff)"
+		echo -e "$red FAIL\n $normal $(cat ./.thediff)"
 	    else
 		echo -e "$green OK $normal"
 	    fi
@@ -103,4 +103,8 @@ else
 	    i=`expr $i + 1`
 	done
     fi
+
+    # Remove o arquivo temporario
+    $(rm ./.thediff)
+
 fi
