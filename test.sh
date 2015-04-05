@@ -55,7 +55,7 @@ else
 	    echo -e "$yellow W $normal Usando diretorio $yellow[aux]$normal local"
 	else
 	    echo -e "$yellow W $normal Baixando testes..."
-	    read -p $'$yellow Q $normal Numero do lab (ex. 00x): ' nlab
+	    read -p $'\e[33m Q \e[0m Numero do lab (ex. 00x): ' nlab
 
 	    # Cria o diretorio e baixa o zip
 	    $(mkdir aux)
