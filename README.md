@@ -15,6 +15,8 @@ Alterar o nome da turma em
 ~~~
 
 ## Modo de uso:
+
+nome_do_programa.c
 ~~~
    ./test.sh nome_do_programa
 ~~~
