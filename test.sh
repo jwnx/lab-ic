@@ -73,7 +73,7 @@ else
 	$(sed $acentos <$code.c> $code.tmp)
 	
 	# Salva somente se os arquivos forem diferentes
-	$(cmp "$code.c" "$code.tmp" || mv "$code.tmp" "$code.c")
+	$(cmp $code.c $code.tmp || mv $code.tmp $code.c)
 	if [ -f $code.tmp ]; then
 	    $(rm $code.tmp)
 	fi
