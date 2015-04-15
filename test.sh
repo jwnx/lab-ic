@@ -70,7 +70,13 @@ else
 
 	# Remove os acentos do arquivo
 	acentos='y/áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ/aAaAaAaAeEeEiIoOoOoOuUcC/'
-	$(sed $acentos <$code.c> $code.tmp; mv $code.tmp $code.c)
+	$(sed $acentos <$code.c> $code.tmp)
+	
+	# Salva somente se os arquivos forem diferentes
+	$(cmp "$code.c" "$code.tmp" || mv "$code.tmp" "$code.c")
+	if [ -f $code.tmp ]; then
+	    $(rm $code.tmp)
+	fi
 
 	#Compila
 	echo -e "$yellow Compilando codigo $normal"
