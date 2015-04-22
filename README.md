@@ -15,12 +15,17 @@ Alterar o nome da turma em
 ~~~
 
 ## Modo de uso:
-
-nome_do_programa.c
 ~~~
-   ./test.sh nome_do_programa
+   ./test.sh <nome_do_programa> <número_do_teste>
 ~~~
+O **nome_do_programa** é obrigatório. O parâmetro **número_do_teste** é opcional e, caso deixado em branco, rodará todos os testes disponíveis.
 
+## Exemplo:
+
+~~~
+   ./test.sh tchonsky 4     #roda o teste 4
+   ./test.sh tchonsky       #roda todos os testes
+~~~
 ##Licença
 
 Este programa é um software livre; você pode redistribuí-lo e/ou modificá-lo dentro dos termos da **GPLv3** (http://www.gnu.org/licenses).
