@@ -53,27 +53,30 @@ function executaTeste {
 
 #Verifica se o numero de parametros esta correto
 if [ $# -gt 2 ]; then
-    echo "Numero de parametros incorretos"
-    echo "O nome do laborarior (ex lab00x), eh obrigatorio"
-    echo "O numero do teste, eh opcional"
+    echo -e "$red E $normal Número de parametros incorreto"
+    echo -e "$red E $yellow ./test.sh <nome-do-arquivo> <numero-do-teste>"
+    echo -e "$red E $normal O número do teste é opcional."
 else
     # Verifica se o nome do laboratorio foi passado
     if [ -z $1 ]; then
-	#Sair do programa
-	echo -e "$red ERROR  $normal"
-	exit 1
+    	#Sair do programa
+    	echo -e "$red E $normal Parametros não foram passados."
+        echo -e "$red E $yellow ./test.sh <nome-do-arquivo> <numero-do-teste>"
+        echo -e "$red E $normal O número do teste é opcional."
+    	exit 1
+
     else
-	# Retira a extensao do nome do arquivo caso o usuario tenha colocado
-	# o codigo C ao inves do nome do programa
-	code="${code%.*}"
+    	# Retira a extensao do nome do arquivo caso o usuario tenha colocado
+    	# o codigo C ao inves do nome do programa
+    	code="${code%.*}"
 
 
-	# Remove os acentos do arquivo
-	acentos='y/áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ/aAaAaAaAeEeEiIoOoOoOuUcC/'
-	$(sed $acentos <$code.c> $code.tmp)
-	
-	# Salva somente se os arquivos forem diferentes
-	$(cmp $code.c $code.tmp || mv $code.tmp $code.c)
+    	# Remove os acentos do arquivo
+    	acentos='y/áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ/aAaAaAaAeEeEiIoOoOoOuUcC/'
+    	$(sed $acentos <$code.c> $code.tmp)
+
+    	# Salva somente se os arquivos forem diferentes
+    	$(cmp $code.c $code.tmp || mv $code.tmp $code.c)
 	if [ -f $code.tmp ]; then
 	    $(rm $code.tmp)
 	fi
@@ -82,7 +85,8 @@ else
 	echo -e "$yellow Compilando codigo $normal"
 	$(gcc -ansi $code.c -o $code -lm)
 
-	#Caso a compilacao tenha dado erro
+
+    #Caso a compilacao tenha dado erro
 	if [ ! $? -eq 0 ]; then
 	    #Sair do programa
 	    echo -e "$red ERROR  $normal"
@@ -93,60 +97,63 @@ else
 
 	    # Se o diretorio nao existe, baixe os arquivos e crie o diretorio
 	    if ( [ -d aux ] ); then
-		echo -e "$yellow W $normal Usando diretorio $yellow[aux]$normal local"
+    		echo -e "$yellow W $normal Usando diretorio $yellow[aux]$normal local"
 	    else
-		echo -e "$yellow W $normal Baixando testes..."
-		read -p $'\e[33m Q \e[0m Numero do lab (ex. 00x): ' nlab
 
-		# Cria o diretorio e baixa o zip
-		$(mkdir aux)
-		$(curl -silent -LOk https://susy.ic.unicamp.br:9999/$turma/$nlab/aux/testes.zip)
+    		echo -e "$yellow W $normal Baixando testes..."
+    		read -p $'\e[33m Q \e[0m Numero do lab (ex. 00x): ' nlab
 
-		echo -e "$yellow W $normal Descompactando arquivos..."
+    		# Cria o diretorio e baixa o zip
+    		$(mkdir aux)
+    		$(curl -silent -LOk https://susy.ic.unicamp.br:9999/$turma/$nlab/aux/testes.zip)
 
-		# Descompacta os arquivos e deleta o zip
-		$(unzip -q testes.zip -d aux > /dev/null 2>&1)
-		$(rm testes.zip)
+    		echo -e "$yellow W $normal Descompactando arquivos..."
+
+    		# Descompacta os arquivos e deleta o zip
+    		$(unzip -q testes.zip -d aux > /dev/null 2>&1)
+    		$(rm testes.zip)
 
 	    fi
 
-	    
-	    echo -e "$red I $normal Rodando testes"
-	    if [ ! -z $2 ]; then
-		# o numero do teste a ser executado foi passado
 
-		# Remove os 0's a esquerda do numero, para que 001 e 01 sejam iguais a 1
-		teste=$(echo $teste | sed 's/^0*//')
-		
+	    echo -e "$red I $normal Rodando testes"
+
+        # Se o numero do teste a ser executado foi passado
+	    if [ ! -z $2 ]; then
+    		# Remove os 0's a esquerda do numero, para que 001 e 01 sejam iguais a 1
+    		teste=$(echo $teste | sed 's/^0*//')
+
+        # Se o numero do teste nao for valido
 		if [ $teste -gt 10 ]; then
-		    #Sair do programa
-		    echo -e "$red ERROR $teste nao eh um teste valido  $normal"
+		    echo -e "$red E $normal O teste $red$teste$normal não é um teste válido"
+            #Sai do programa
 		    exit 1
 		fi
-		
+
 		#formata o parametro para ter formato (00)
 		while [[ $(echo -n ${teste} | wc -c) -lt 2 ]] ; do
 		    teste="0${teste}"
 		done
-		
+
 		filename=$(pwd)/aux/arq$teste.in;
 		file="${filename%.*}"
+
 		#Executa funcao
-		executaTeste $code $file $teste		
+		executaTeste $code $file $teste
+
 	    else
 		# Para cada arquivo em aux com final .in
+    		for filename in $(pwd)/aux/*.in; do
 
-		for filename in $(pwd)/aux/*.in; do
+    		    # Retira a extensao do nome do arquivo
+    		    file="${filename%.*}"
 
-		    # Retira a extensao do nome do arquivo
-		    file="${filename%.*}"
+    		    # Executa funcao
+    		    executaTeste $code $file $i
 
-		    # Executa funcao
-		    executaTeste $code $file $i
-		    
-		    # i += 1
-		    i=`expr $i + 1`
-		done
+    		    # i += 1
+    		    i=`expr $i + 1`
+    		done
 	    fi
 	fi
 
