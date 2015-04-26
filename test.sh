@@ -39,15 +39,12 @@ function executaTeste {
     T="$(date +%s%N)"
     # Cria a saida de acordo com a entrada
     $(./$1 < $2.in > $2.out)
-        
+
     # Intervalo de tempo em nanosegundos
     T="$(($(date +%s%N)-T))"
-    # Intervale de tempo em segundos
-    S="$((T/1000000000))"
-    # Intervalo de tempo em milisegundos
-    M="$((T/1000000))"
 
-    printf "Runtime: %02d:%02d.%03d\n" "$((S/60%60))" "$((S%60))" "${M}"
+    #Intervalo de tempo em milisegundos
+    M="$(echo "scale=3;$T/1000000" | bc)"
 
     # Compara com o resultado esperado e
     # diz se o programa passou ou nao
@@ -58,7 +55,7 @@ function executaTeste {
     then
 	echo -e "$red FAIL\n $normal $(cat ./.thediff)"
     else
-	echo -e "$green OK $normal"
+	echo -e "$green OK $normal ($M ms)"
     fi
 
     # Remove o arquivo de saida
