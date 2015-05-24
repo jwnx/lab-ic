@@ -32,11 +32,9 @@ function executaTeste {
     # Itera pelos testes
     printf "$yellow R $normal Teste $bold[%02d]$normal... " $((10#$3))
 
-    # Cria a saida de acordo com a entrada
-    $(./$1 < $2.in > $2.out)
-
     # Timestamp do UNIX concatenado em nanosegundos
     T="$(date +%s%N)"
+    
     # Cria a saida de acordo com a entrada
     $(./$1 < $2.in > $2.out)
 
