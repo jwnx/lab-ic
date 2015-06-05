@@ -16,15 +16,16 @@ Alterar o nome da turma em
 
 ## Modo de uso:
 ~~~
-   ./test.sh <nome_do_programa> <número_do_teste>
+   ./test.sh -[vh] <nome_do_programa> <número_do_teste>
 ~~~
-O **nome_do_programa** é obrigatório. O parâmetro **número_do_teste** é opcional e, caso deixado em branco, rodará todos os testes disponíveis.
+As opções disponíveis são **-v**, roda o valgrind no código, e **-h** mostra o texto de ajuda. O **nome_do_programa** é obrigatório. O parâmetro **número_do_teste** é opcional e, caso deixado em branco, rodará todos os testes disponíveis.
 
 ## Exemplo:
 
 ~~~
    ./test.sh tchonsky 4     #roda o teste 4
    ./test.sh tchonsky       #roda todos os testes
+   ./test.sh -v tchonsky    #roda todos com valgrind
 ~~~
 ##Licença
 
