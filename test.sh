@@ -7,8 +7,7 @@
 #	Alterar o nome da turma
 #
 #	Modo de uso:
-#	./test.sh nome_do_programa
-#       ./test.sh nome_do_programa teste_a_ser_executado
+#   ./test.sh -[vh] nome_do_programa teste_a_ser_executado
 
 
 # O codigo \033 eh usado para dar um espaco
