@@ -10,10 +10,6 @@
 #	./test.sh nome_do_programa
 #       ./test.sh nome_do_programa teste_a_ser_executado
 
-code="$1"
-teste="$2"
-turma="mc102wy"
-i=1;
 
 # O codigo \033 eh usado para dar um espaco
 # Colors
@@ -25,21 +21,62 @@ yellow="\033[33m"
 normal="\033[0m"
 bold="\033[1m"
 
+# Imprime o modo de uso
+function uso {
+    echo -e "$yellow I  ./test.sh -[vh] $bold<nome-do-arquivo>$normal $yellow<numero-do-teste>"
+    echo -e "$yellow I $normal O número do teste é opcional."
+    echo -e "$yellow I $normal Opções:$yellow -v $normal valgrind"
+    echo -e "           $yellow -h $normal ajuda"
+
+    exit 1;
+}
+
+val=0;
+hel=0;
+
+# Menu de opcoes pro script!
+while getopts vhe OPCAO; do
+    case "${OPCAO}" in
+        v) val=1;;
+        h) uso;;
+        e) hel=1;;
+    esac
+done
+
+# Remove dos argumentos de entrada tudo o que é opção
+# e deixa no vetor somente o que não é usado pelo getopts
+shift $((OPTIND -1))
+
+code="$1"
+teste="$2"
+turma="mc102wy"
+i=1;
+
 # $1 : codigo a ser executado
 # $2 : arquivo teste
 # $3 : numero do teste
+
 function executaTeste {
+
+    # Cria a saida de acordo com a entrada, checando os acessos de memoria
+    if [[ $val -eq 1 ]]; then
+        if hash valgrind 2>/dev/null; then
+            printf "$yellow R $bold Valgrind$normal Output $bold[%02d]$normal: \n" $((10#$3))
+            $(valgrind --leak-check=full ./$1 < $2.in > $2.out)
+        else
+            printf "$red E $normal Valgrind não está instalado. Ignorando.\n"
+            val=0;
+        fi
+    fi
+    if [[ $val -eq 0 ]]; then
+        $(./$1 < $2.in > $2.out)
+    fi
+
     # Itera pelos testes
     printf "$yellow R $normal Teste $bold[%02d]$normal... " $((10#$3))
 
     # Timestamp do UNIX concatenado em nanosegundos
-    T="$(date +%s%N)"
-    
-    # Cria a saida de acordo com a entrada
-    $(./$1 < $2.in > $2.out)
-
-    # Cria a saida de acordo com a entrada, checando os acessos de memoria
-    $(valgrind --leak-check=full ./$1 < $2.in > $2.out)
+    T="$(date +%s%N)"    
 
     # Intervalo de tempo em nanosegundos
     T="$(($(date +%s%N)-T))"
@@ -63,19 +100,55 @@ function executaTeste {
     $(rm $2.out)
 }
 
+# Serios problemas 
+if [[ $hel -eq 1 ]]; then
+    echo "~~~~~~~~~~~~~~~:,,::::,,:~~~~~~~~~~~~~~~"
+    echo "~~~~~~~~~~~~~~:,,,.,,~~:~,,:~~~~~~~~~~~~"
+    echo "~~~~~~~~~~~~:~:::,,,,::~=~,..:~~~~~~~~~~"
+    echo "~~~~~~~:~~~~~:~,,:,:==~:,,,,.,,:~~~~~~~~"
+    echo "~~~~:~~::~~~:~~~,,,,::=+~~,,.:.,,:~~~~~~"
+    echo "~~~:::::~~=~=++==~~=:==+~==:::,,,,:~~~~~"
+    echo "::::::::~=~,=+++??+~~=?+++==:~,,,,,~===="
+    echo ":::::::::~:,=++??II???II???+~,:::,,,~==="
+    echo ":::::::~::,=~~==~+????=~=====,,,:,,,===="
+    echo "~~~~~~~~~::=+==:++=?+===~=++==,,,,,~===="
+    echo "~~~~~~~~~~====+?++=++=+I+==++=~~,,,~===="
+    echo "~~~~~~~~++=+++?+++++++????+++~+?,,:====="
+    echo "~~~~~~~~=+++++??I+??++I?????=:??,,:====="
+    echo "~~~~~~~~~++=+???+++?+++????+=:+,,,~====="
+    echo "~~~~~~~~~~+=+++++?????+++??+==:,,,======"
+    echo "~~~~~~~~~~~~+++?++++++=++?++=~,,,~======"
+    echo "~~~~~~~~~~~~=+++++????++??++~,,,~~======"
+    echo "~~~~~~~~~~~~==++++????+++++=,,,:========"
+    echo "~~~~~~~~~~~~++==++????++=+~+,,,~========"
+    echo "~~~~~~~~~~~~++===++??++===+=,,,========="
+    echo "~~~~~~~~~~~~+++++=++++=+=+++:,,========="
+    echo "~~~~~~~~~~~,=++++++????+=++++,,~========"
+    echo "~~~~~~~~~~=+=++?+++???+=++++==~,~======="
+    echo "~~~~~~~~~==++=??+++??+==?++++===+=~====="
+    echo "~~~~~~=+====+++??++???+???+++=+++++=:==="
+    echo "~~~~~=+=====+===?????????++++=++++++==~~"
+    echo "~~~====+++==~===++??????+?=+==++++++=+++"
+    echo "~+++=+==+==++~++++++????+++++==+++++=+++"
+    echo "++++==++++++==++++++++++++=+++++++++=+++"
+    echo "++++=++++++++++++++?++++++++++++++++++++"
+    echo "++++=++++++++++++++++?++++++++++++++?+++"
+    echo "++++==+++++++++++++++++++++++++++++++=++"
+    echo "++++++ Você terá sérios problemas ++==++"
+
+    exit 1;
+fi 
+
 #Verifica se o numero de parametros esta correto
 if [ $# -gt 2 ]; then
     echo -e "$red E $normal Número de parametros incorreto"
-    echo -e "$red E $yellow ./test.sh <nome-do-arquivo> <numero-do-teste>"
-    echo -e "$red E $normal O número do teste é opcional."
+    uso
 else
     # Verifica se o nome do laboratorio foi passado
     if [ -z $1 ]; then
     	#Sair do programa
     	echo -e "$red E $normal Parametros não foram passados."
-        echo -e "$red E $yellow ./test.sh <nome-do-arquivo> <numero-do-teste>"
-        echo -e "$red E $normal O número do teste é opcional."
-    	exit 1
+        uso
 
     else
     	# Retira a extensao do nome do arquivo caso o usuario tenha colocado
