@@ -35,13 +35,11 @@ function executaTeste {
     # Timestamp do UNIX concatenado em nanosegundos
     T="$(date +%s%N)"
     
-<<<<<<< test.sh
     # Cria a saida de acordo com a entrada
     $(./$1 < $2.in > $2.out)
-=======
+
     # Cria a saida de acordo com a entrada, checando os acessos de memoria
     $(valgrind --leak-check=full ./$1 < $2.in > $2.out)
->>>>>>> test_mem.sh
 
     # Intervalo de tempo em nanosegundos
     T="$(($(date +%s%N)-T))"
