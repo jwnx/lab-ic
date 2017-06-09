@@ -27,7 +27,7 @@ As opções disponíveis são **-v**, roda o valgrind no código, e **-h** mostr
    ./test.sh tchonsky       #roda todos os testes
    ./test.sh -v tchonsky    #roda todos com valgrind
 ~~~
-##Licença
+## Licença
 
 Este programa é um software livre; você pode redistribuí-lo e/ou modificá-lo dentro dos termos da **GPLv3** (http://www.gnu.org/licenses).
 
